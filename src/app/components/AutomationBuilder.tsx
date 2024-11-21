@@ -34,7 +34,7 @@ const AutomationBuilder = () => {
   const reactFlowWrapper = useRef(null);
 
   const { screenToFlowPosition } = useReactFlow();
-  const { type } = useDnD();
+  const { type, name } = useDnD();
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -80,18 +80,19 @@ const AutomationBuilder = () => {
         x: event.clientX,
         y: event.clientY,
       });
+      console.log(setNodes);
       const newNode = {
         id: getId(),
         type,
         position,
-        data: { label: `${type} node` },
+        data: { label: name },
       };
 
       setNodes((nds) => [...nds, newNode]);
       setCurrentNode({ id: newNode.id, name: newNode.data.label });
       setIsModalOpen(true);
     },
-    [screenToFlowPosition, type, setNodes]
+    [screenToFlowPosition, type, name, setNodes]
   );
 
   const handleModalSave = (name: string) => {

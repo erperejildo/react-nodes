@@ -42,6 +42,11 @@ const NodeModal = ({ isOpen, nodeName, onSave, onClose }: NodeModalProps) => {
             setError('');
           }}
           placeholder="Enter node name"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSave();
+            }
+          }}
         />
         {error && <p className="node-modal-error">{error}</p>}
         <div className="node-modal-actions">

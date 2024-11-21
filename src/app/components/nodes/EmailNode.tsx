@@ -1,11 +1,11 @@
-import { Handle, Node, NodeProps, Position } from "@xyflow/react";
-import { memo } from "react";
+import { Handle, Node, NodeProps, Position } from '@xyflow/react';
+import { memo } from 'react';
 
-type EmailNode = Node<{ label: string }, "string">;
+type EmailNode = Node<{ label: string }, 'string'>;
 
 const EmailNode = ({ data, selected }: NodeProps<EmailNode>) => {
   return (
-    <div className={`email-node${selected ? " selected" : ""}`}>
+    <div className={`email-node${selected ? ' selected' : ''}`}>
       <Handle type="target" position={Position.Left} />
       <div>
         <strong>{data.label}</strong>

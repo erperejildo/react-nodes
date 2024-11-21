@@ -43,17 +43,19 @@
   background-color: aqua;
 }
 
-.email-node .edit-node-btn {
-  margin-left: 10px;
+.node-option {
+  margin-bottom: 10px;
+}
+
+.edit-default-name-btn {
   padding: 4px 8px;
-  font-size: 12px;
+  font-size: 10px;
   border: none;
   background: #007bff;
   color: white;
-  border-radius: 4px;
   cursor: pointer;
 }
 
-.email-node .edit-node-btn:hover {
+.edit-default-name-btn:hover {
   background: #0056b3;
 }
