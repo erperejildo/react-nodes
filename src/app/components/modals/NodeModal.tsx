@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './NodeModal.css';
 
 type NodeModalProps = {
@@ -12,31 +12,45 @@ type NodeModalProps = {
 
 const NodeModal = ({ isOpen, nodeName, onSave, onClose }: NodeModalProps) => {
   const [name, setName] = useState(nodeName);
+  const [error, setError] = useState('');
 
-  if (!isOpen) return null;
+  useEffect(() => {
+    if (isOpen) {
+      setName(nodeName);
+      setError('');
+    }
+  }, [isOpen, nodeName]);
 
   const handleSave = () => {
-    onSave(name);
+    if (name.trim() === '') {
+      setError('Node name cannot be empty');
+      return;
+    }
+    onSave(name.trim());
     onClose();
   };
 
-  return (
+  return isOpen ? (
     <div className="node-modal-overlay">
       <div className="node-modal">
-        <h3>Edit Node</h3>
+        <h3>Node Name</h3>
         <input
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            setError('');
+          }}
           placeholder="Enter node name"
         />
+        {error && <p className="node-modal-error">{error}</p>}
         <div className="node-modal-actions">
           <button onClick={onClose}>Cancel</button>
           <button onClick={handleSave}>Save</button>
         </div>
       </div>
     </div>
-  );
+  ) : null;
 };
 
 export default NodeModal;

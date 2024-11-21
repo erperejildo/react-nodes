@@ -88,7 +88,7 @@ const AutomationBuilder = () => {
       };
 
       setNodes((nds) => [...nds, newNode]);
-      setCurrentNode({ id: newNode.id, name: `${type} node` });
+      setCurrentNode({ id: newNode.id, name: newNode.data.label });
       setIsModalOpen(true);
     },
     [screenToFlowPosition, type, setNodes]

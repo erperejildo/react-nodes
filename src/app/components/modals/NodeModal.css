@@ -28,8 +28,10 @@
   width: 100%;
   padding: 8px;
   margin-bottom: 15px;
-  border: 1px solid #ccc;
+  border: 1px solid #7a7a7a;
   border-radius: 4px;
+  background-color: #fff;
+  color: var(--foreground);
 }
 
 .node-modal-actions {
@@ -45,10 +47,16 @@
 }
 
 .node-modal-actions button:first-child {
+  background-color: #7a7a7a;
+}
+
+.node-modal-actions button:last-child {
   background-color: #007bff;
   color: white;
 }
 
-.node-modal-actions button:last-child {
-  background-color: #ccc;
+.node-modal-error {
+  color: red;
+  font-size: 0.875rem;
+  margin-bottom: 15px;
 }
