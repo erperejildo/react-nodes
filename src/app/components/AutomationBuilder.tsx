@@ -1,6 +1,5 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef } from "react";
 import {
   addEdge,
   Background,
@@ -12,14 +11,16 @@ import {
   useEdgesState,
   useNodesState,
   useReactFlow,
-} from "@xyflow/react";
+} from '@xyflow/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import Sidebar from "./Sidebar";
-import { useDnD } from "../contexts/DnDContext";
+import { useDnD } from '../contexts/DnDContext';
+import Sidebar from './Sidebar';
 
-import "@xyflow/react/dist/style.css";
-import "./styles.css";
-import EmailNode from "./nodes/EmailNode";
+import '@xyflow/react/dist/style.css';
+import NodeModal from './modals/NodeModal';
+import EmailNode from './nodes/EmailNode';
+import './styles.css';
 
 let id = 0;
 const getId = () => `dndnode_${id++}`;
@@ -38,10 +39,16 @@ const AutomationBuilder = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentNode, setCurrentNode] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
   // we load the data from the server on mount
   useEffect(() => {
     const getData = async () => {
-      const data = await fetch("/api/automation");
+      const data = await fetch('/api/automation');
       const automation = await data.json();
       setNodes(automation.nodes);
       setEdges(automation.edges);
@@ -57,7 +64,7 @@ const AutomationBuilder = () => {
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
+    event.dataTransfer.dropEffect = 'move';
   }, []);
 
   const onDrop = useCallback(
@@ -81,32 +88,55 @@ const AutomationBuilder = () => {
       };
 
       setNodes((nds) => [...nds, newNode]);
+      setCurrentNode({ id: newNode.id, name: `${type} node` });
+      setIsModalOpen(true);
     },
     [screenToFlowPosition, type, setNodes]
   );
 
+  const handleModalSave = (name: string) => {
+    if (currentNode) {
+      setNodes((nds) =>
+        nds.map((node) =>
+          node.id === currentNode.id
+            ? { ...node, data: { ...node.data, label: name } }
+            : node
+        )
+      );
+    }
+    setCurrentNode(null);
+  };
+
   return (
-    <div className="automation-builder">
-      <div className="reactflow-wrapper" ref={reactFlowWrapper}>
-        <ReactFlow
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          fitView
-          className="overview"
-          onDrop={onDrop}
-          onDragOver={onDragOver}
-          nodeTypes={nodeTypes}
-        >
-          <MiniMap zoomable pannable />
-          <Controls />
-          <Background />
-        </ReactFlow>
+    <>
+      <div className="automation-builder">
+        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            fitView
+            className="overview"
+            onDrop={onDrop}
+            onDragOver={onDragOver}
+            nodeTypes={nodeTypes}
+          >
+            <MiniMap zoomable pannable />
+            <Controls />
+            <Background />
+          </ReactFlow>
+        </div>
+        <Sidebar />
       </div>
-      <Sidebar />
-    </div>
+      <NodeModal
+        isOpen={isModalOpen}
+        nodeName={currentNode?.name || ''}
+        onSave={handleModalSave}
+        onClose={() => setIsModalOpen(false)}
+      />
+    </>
   );
 };
 
