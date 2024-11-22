@@ -3,7 +3,7 @@ import { useDnD } from '../contexts/DnDContext';
 import NodeModal from './modals/NodeModal';
 import './styles.css';
 
-const Sidebar = () => {
+const Sidebar = ({ onSave }: { onSave: () => void }) => {
   const { setType, setName } = useDnD();
   const [defaultNames, setDefaultNames] = useState({
     input: 'Input Node',
@@ -42,7 +42,7 @@ const Sidebar = () => {
       {Object.entries(defaultNames).map(([type, name]) => (
         <div key={type} className="node-option">
           <button
-            className="edit-default-name-btn"
+            className="edit-default-name-button"
             onClick={() => handleEditClick(type)}
           >
             Change Name
@@ -56,6 +56,12 @@ const Sidebar = () => {
           </div>
         </div>
       ))}
+
+      <div className="save-button-wrapper">
+        <button className="save-button" onClick={onSave}>
+          Save
+        </button>
+      </div>
 
       <NodeModal
         isOpen={isModalOpen}

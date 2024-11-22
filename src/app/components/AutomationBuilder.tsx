@@ -30,8 +30,10 @@ const nodeTypes: NodeTypes = {
   email: EmailNode,
 };
 
+const LOCAL_STORAGE_KEY = 'automation-builder';
+
 const AutomationBuilder = () => {
-  const reactFlowWrapper = useRef(null);
+  const reactFlowWrapper = useRef<HTMLDivElement | null>(null);
 
   const { screenToFlowPosition } = useReactFlow();
   const { type, name } = useDnD();
@@ -45,18 +47,38 @@ const AutomationBuilder = () => {
     name: string;
   } | null>(null);
 
-  // we load the data from the server on mount
   useEffect(() => {
-    const getData = async () => {
-      const data = await fetch('/api/automation');
-      const automation = await data.json();
-      setNodes(automation.nodes);
-      setEdges(automation.edges);
+    const loadData = async () => {
+      try {
+        const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+
+        if (savedData) {
+          const { nodes: savedNodes, edges: savedEdges } =
+            JSON.parse(savedData);
+          setNodes(savedNodes);
+          setEdges(savedEdges);
+        } else {
+          const res = await fetch('/api/automation');
+          if (!res.ok) throw new Error('Failed to load automation data.');
+          const automation = await res.json();
+          setNodes(automation.nodes);
+          setEdges(automation.edges);
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Error loading automation data.');
+      }
     };
-    getData();
+
+    loadData();
   }, [setNodes, setEdges]);
 
-  // various callbacks
+  const saveAutomation = () => {
+    const dataToSave = { nodes, edges };
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToSave));
+    alert('Automation data saved to local storage!');
+  };
+
   const onConnect: OnConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
     [setEdges]
@@ -71,7 +93,6 @@ const AutomationBuilder = () => {
     (event: React.DragEvent) => {
       event.preventDefault();
 
-      // check if the dropped element is valid
       if (!type) {
         return;
       }
@@ -80,7 +101,7 @@ const AutomationBuilder = () => {
         x: event.clientX,
         y: event.clientY,
       });
-      console.log(setNodes);
+
       const newNode = {
         id: getId(),
         type,
@@ -106,6 +127,7 @@ const AutomationBuilder = () => {
       );
     }
     setCurrentNode(null);
+    setIsModalOpen(false);
   };
 
   return (
@@ -129,7 +151,7 @@ const AutomationBuilder = () => {
             <Background />
           </ReactFlow>
         </div>
-        <Sidebar />
+        <Sidebar onSave={saveAutomation} />
       </div>
       <NodeModal
         isOpen={isModalOpen}
