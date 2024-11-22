@@ -1,3 +1,4 @@
+import Button from '@mui/material/Button/Button';
 import { useState } from 'react';
 import { useDnD } from '../contexts/DnDContext';
 import NodeModal from './modals/NodeModal';
@@ -57,11 +58,14 @@ const Sidebar = ({ onSave }: { onSave: () => void }) => {
         </div>
       ))}
 
-      <div className="save-button-wrapper">
-        <button className="save-button" onClick={onSave}>
-          Save
-        </button>
-      </div>
+      <Button
+        variant="contained"
+        className="save-button"
+        fullWidth
+        onClick={onSave}
+      >
+        Save
+      </Button>
 
       <NodeModal
         isOpen={isModalOpen}
