@@ -1,5 +1,6 @@
 'use client';
 
+import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import {
   addEdge,
   Background,
@@ -17,7 +18,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDnD } from '../contexts/DnDContext';
 import Sidebar from './Sidebar';
 
+import CloseIcon from '@mui/icons-material/Close';
+import { IconButton } from '@mui/material';
 import '@xyflow/react/dist/style.css';
+import React from 'react';
 import NodeModal from './modals/NodeModal';
 import EmailNode from './nodes/EmailNode';
 import './styles.css';
@@ -47,6 +51,9 @@ const AutomationBuilder = () => {
     name: string;
   } | null>(null);
 
+  const [openSaveSnackbar, setOpenSaveSnackbar] = useState(false);
+  const [msgSaveSnackbar, setMsgSaveSnackbar] = useState('');
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -75,8 +82,22 @@ const AutomationBuilder = () => {
 
   const saveAutomation = () => {
     const dataToSave = { nodes, edges };
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToSave));
-    alert('Automation data saved to local storage!');
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToSave));
+      showSaveSnackbar();
+    } catch (error) {
+      console.error('Error saving automation:', error);
+      showSaveSnackbar(true);
+    }
+  };
+
+  const showSaveSnackbar = (error: boolean = false) => {
+    if (error) {
+      setMsgSaveSnackbar('Error saving automation');
+    } else {
+      setMsgSaveSnackbar('Automation saved successfully');
+    }
+    setOpenSaveSnackbar(true);
   };
 
   const onConnect: OnConnect = useCallback(
@@ -130,6 +151,30 @@ const AutomationBuilder = () => {
     setIsModalOpen(false);
   };
 
+  const handleCloseSnackbar = (
+    event: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSaveSnackbar(false);
+  };
+
+  const action = (
+    <React.Fragment>
+      <IconButton
+        size="small"
+        aria-label="close"
+        color="inherit"
+        onClick={handleCloseSnackbar}
+      >
+        <CloseIcon fontSize="small" />
+      </IconButton>
+    </React.Fragment>
+  );
+
   return (
     <>
       <div className="automation-builder">
@@ -158,6 +203,14 @@ const AutomationBuilder = () => {
         nodeName={currentNode?.name || ''}
         onSave={handleModalSave}
         onClose={() => setIsModalOpen(false)}
+      />
+      <Snackbar
+        open={openSaveSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        message={msgSaveSnackbar}
+        action={action}
       />
     </>
   );
