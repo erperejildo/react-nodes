@@ -1,4 +1,3 @@
-import Button from '@mui/material/Button/Button';
 import { useState } from 'react';
 import { useDnD } from '../contexts/DnDContext';
 import NodeModal from './modals/NodeModal';
@@ -37,14 +36,17 @@ const Sidebar = ({ onSave }: { onSave: () => void }) => {
   };
 
   return (
-    <aside className="sidebar">
-      <div className="description">You can drag these nodes.</div>
+    <aside className="sidebar" role="complementary" aria-label="Node Sidebar">
+      <div className="description" aria-live="polite">
+        You can drag these nodes.
+      </div>
 
       {Object.entries(defaultNames).map(([type, name]) => (
         <div key={type} className="node-option">
           <button
             className="edit-default-name-button"
             onClick={() => handleEditClick(type)}
+            aria-label={`Change name for ${name}`}
           >
             Change Name
           </button>
@@ -52,24 +54,30 @@ const Sidebar = ({ onSave }: { onSave: () => void }) => {
             className={`dndnode ${type}`}
             onDragStart={(event) => onDragStart(event, type, name)}
             draggable
+            role="button"
+            tabIndex={0}
+            aria-label={`Draggable ${name}`}
           >
             {name}
           </div>
         </div>
       ))}
 
-      <Button
-        variant="contained"
+      <button
         className="save-button"
-        fullWidth
         onClick={onSave}
+        aria-label="Save changes"
       >
         Save
-      </Button>
+      </button>
 
       <NodeModal
         isOpen={isModalOpen}
-        nodeName={defaultNames[currentType || '']}
+        nodeName={
+          currentType
+            ? defaultNames[currentType as keyof typeof defaultNames]
+            : defaultNames.default
+        }
         onSave={handleSave}
         onClose={() => setIsModalOpen(false)}
       />

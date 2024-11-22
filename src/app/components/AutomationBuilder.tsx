@@ -1,5 +1,6 @@
 'use client';
 
+import { Box } from '@mui/material';
 import Snackbar, { SnackbarCloseReason } from '@mui/material/Snackbar';
 import {
   addEdge,
@@ -177,8 +178,8 @@ const AutomationBuilder = () => {
 
   return (
     <>
-      <div className="automation-builder">
-        <div className="reactflow-wrapper" ref={reactFlowWrapper}>
+      <Box className="automation-builder">
+        <Box className="reactflow-wrapper" ref={reactFlowWrapper}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -195,9 +196,9 @@ const AutomationBuilder = () => {
             <Controls />
             <Background />
           </ReactFlow>
-        </div>
+        </Box>
         <Sidebar onSave={saveAutomation} />
-      </div>
+      </Box>
       <NodeModal
         isOpen={isModalOpen}
         nodeName={currentNode?.name || ''}

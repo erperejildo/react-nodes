@@ -31,9 +31,9 @@ const NodeModal = ({ isOpen, nodeName, onSave, onClose }: NodeModalProps) => {
   };
 
   return isOpen ? (
-    <div className="node-modal-overlay">
-      <div className="node-modal">
-        <h3>Node Name</h3>
+    <div className="node-modal-overlay" role="dialog" aria-modal="true">
+      <div className="node-modal" role="document">
+        <h3 id="node-modal-title">Node Name</h3>
         <input
           type="text"
           value={name}
@@ -47,8 +47,14 @@ const NodeModal = ({ isOpen, nodeName, onSave, onClose }: NodeModalProps) => {
               handleSave();
             }
           }}
+          aria-labelledby="node-modal-title"
+          aria-describedby="node-modal-error"
         />
-        {error && <p className="node-modal-error">{error}</p>}
+        {error && (
+          <p id="node-modal-error" className="node-modal-error">
+            {error}
+          </p>
+        )}
         <div className="node-modal-actions">
           <button onClick={onClose}>Cancel</button>
           <button onClick={handleSave}>Save</button>

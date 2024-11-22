@@ -68,4 +68,14 @@
 
 .sidebar .save-button {
   margin-top: 40px;
+  width: 100%;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #529901;
+  cursor: pointer;
+}
+
+.sidebar .save-button:hover {
+  background-color: #3b6e00;
 }
