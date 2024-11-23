@@ -22,7 +22,7 @@ describe('Sidebar Component', () => {
     expect(screen.getByText('Output Node')).toBeInTheDocument();
   });
 
-  it('calls onSave when save button is clicked', () => {
+  it('calls Save when save button is clicked', () => {
     renderSidebar();
 
     const saveButton = screen.getByRole('button', { name: /save changes/i });

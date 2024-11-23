@@ -166,7 +166,11 @@ const AutomationBuilder = () => {
   return (
     <>
       <Box className="automation-builder">
-        <Box className="reactflow-wrapper" ref={reactFlowWrapper}>
+        <Box
+          className="reactflow-wrapper"
+          data-testid="reactflow-wrapper"
+          ref={reactFlowWrapper}
+        >
           <ReactFlow
             nodes={nodes}
             edges={edges}
