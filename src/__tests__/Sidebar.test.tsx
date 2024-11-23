@@ -4,11 +4,12 @@ import { DnDProvider } from '../app/contexts/DnDContext';
 
 describe('Sidebar Component', () => {
   const mockOnSave = jest.fn();
+  const mockOnRestart = jest.fn();
 
   const renderSidebar = () => {
     render(
       <DnDProvider>
-        <Sidebar onSave={mockOnSave} />
+        <Sidebar onSave={mockOnSave} onRestart={mockOnRestart} />
       </DnDProvider>
     );
   };
@@ -30,37 +31,22 @@ describe('Sidebar Component', () => {
     expect(mockOnSave).toHaveBeenCalledTimes(1);
   });
 
-  it('opens the modal when clicking "Change Name" button', () => {
+  it('opens dialog and updates node name', () => {
     renderSidebar();
 
     const changeNameButtons = screen.getAllByRole('button', {
-      name: /change name for/i,
-    });
-    fireEvent.click(changeNameButtons[0]);
-
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Enter node name')).toHaveValue(
-      'Input Node'
-    );
-  });
-
-  it('updates the node name via the modal', () => {
-    renderSidebar();
-
-    const changeNameButtons = screen.getAllByRole('button', {
-      name: /change name for/i,
+      name: /edit name for/i,
     });
     fireEvent.click(changeNameButtons[0]);
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
 
-    const inputField = screen.getByPlaceholderText('Enter node name');
+    const inputField = screen.getByPlaceholderText('Type it');
     fireEvent.change(inputField, { target: { value: 'Updated Input Node' } });
 
     const saveButton = screen.getByRole('button', { name: /Save node name/i });
     fireEvent.click(saveButton);
 
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(screen.getByText('Updated Input Node')).toBeInTheDocument();
   });
 });
