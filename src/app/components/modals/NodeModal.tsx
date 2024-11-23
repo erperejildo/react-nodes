@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Box, Button, Modal, TextField } from '@mui/material';
+import React, { useEffect, useState } from 'react';
 import './NodeModal.css';
 
 type NodeModalProps = {
@@ -23,49 +24,57 @@ const NodeModal = ({ isOpen, nodeName, onSave, onClose }: NodeModalProps) => {
 
   const handleSave = () => {
     if (name.trim() === '') {
-      setError('Node name cannot be empty');
+      setError('This cannot be empty');
       return;
     }
     onSave(name.trim());
     onClose();
   };
 
-  return isOpen ? (
-    <div className="node-modal-overlay" role="dialog" aria-modal="true">
-      <div className="node-modal" role="document">
-        <h3 id="node-modal-title">Node Name</h3>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => {
-            setName(e.target.value);
-            setError('');
-          }}
-          placeholder="Enter node name"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSave();
-            }
-          }}
-          aria-labelledby="node-modal-title"
-          aria-describedby="node-modal-error"
-        />
-        {error && (
-          <p id="node-modal-error" className="node-modal-error">
-            {error}
-          </p>
-        )}
-        <div className="node-modal-actions">
-          <button aria-label="Cancel node name" onClick={onClose}>
-            Cancel
-          </button>
-          <button aria-label="Save node name" onClick={handleSave}>
-            Save
-          </button>
+  return (
+    <Modal open={isOpen} onClose={onClose}>
+      <Box className="modal-container">
+        <h2 className="child-modal-title">Change Name</h2>
+        <div className="child-modal-description">
+          <TextField
+            label="New node name"
+            value={name}
+            type="text"
+            variant="outlined"
+            fullWidth
+            placeholder="Enter a new name"
+            error={error !== ''}
+            helperText={error}
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+              setName(event.target.value);
+            }}
+            onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) => {
+              if (event.key === 'Enter') {
+                handleSave();
+              }
+            }}
+          />
         </div>
-      </div>
-    </div>
-  ) : null;
+        <Box className="modal-buttons">
+          <Button
+            onClick={onClose}
+            variant="contained"
+            color="error"
+            aria-label="Cancel node name"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleSave}
+            variant="contained"
+            aria-label="Save node name"
+          >
+            Save
+          </Button>
+        </Box>
+      </Box>
+    </Modal>
+  );
 };
 
 export default NodeModal;
