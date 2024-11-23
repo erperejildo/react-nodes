@@ -1,8 +1,15 @@
 'use client';
 
-import { Box, Button, Modal, TextField } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import './NodeModal.css';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 
 type NodeModalProps = {
   isOpen: boolean;
@@ -32,17 +39,22 @@ const NodeModal = ({ isOpen, nodeName, onSave, onClose }: NodeModalProps) => {
   };
 
   return (
-    <Modal open={isOpen} onClose={onClose}>
-      <Box className="modal-container">
-        <h2 className="child-modal-title">Change Name</h2>
-        <div className="child-modal-description">
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+      <DialogTitle id="alert-dialog-title">Node Name</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
           <TextField
             label="New node name"
             value={name}
             type="text"
-            variant="outlined"
+            variant="filled"
             fullWidth
-            placeholder="Enter a new name"
+            placeholder="Type it"
             error={error !== ''}
             helperText={error}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,26 +66,15 @@ const NodeModal = ({ isOpen, nodeName, onSave, onClose }: NodeModalProps) => {
               }
             }}
           />
-        </div>
-        <Box className="modal-buttons">
-          <Button
-            onClick={onClose}
-            variant="contained"
-            color="error"
-            aria-label="Cancel node name"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSave}
-            variant="contained"
-            aria-label="Save node name"
-          >
-            Save
-          </Button>
-        </Box>
-      </Box>
-    </Modal>
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSave} autoFocus>
+          Save
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
