@@ -48,3 +48,13 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## DEV NOTES
+
+- Used [material-ui](https://mui.com/material-ui) for components such as dialogs or buttons. I also created manual (and simple) buttons, just for demonstration.
+- Completed tasks and also added SAVE and RESTART data.
+- Created small and independent components with their unit tests.
+- Default node names can be changed and again after dropping a new node. Added validation when changing name.
+- Not sure what to do with EmailNode.tsx. The instructions don't mention anything about it.
+- When covering accessibility, I tried to create a menu to add the nodes from mobile (I already made that responsive), but I looked into the ReactFlow properties and also in its repo to see if this was possible, and I didn't find a way. So this is something I'd like to have if I had more time to look into it.
+- Follow instructions above to run the project and `npm run test` to run tests.
