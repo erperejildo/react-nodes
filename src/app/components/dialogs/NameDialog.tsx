@@ -11,14 +11,14 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-type NodeModalProps = {
+type NameDialogProps = {
   isOpen: boolean;
   nodeName: string;
   onSave: (name: string) => void;
   onClose: () => void;
 };
 
-const NodeModal = ({ isOpen, nodeName, onSave, onClose }: NodeModalProps) => {
+const NameDialog = ({ isOpen, nodeName, onSave, onClose }: NameDialogProps) => {
   const [name, setName] = useState(nodeName);
   const [error, setError] = useState('');
 
@@ -78,4 +78,4 @@ const NodeModal = ({ isOpen, nodeName, onSave, onClose }: NodeModalProps) => {
   );
 };
 
-export default NodeModal;
+export default NameDialog;
