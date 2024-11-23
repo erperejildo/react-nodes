@@ -1,58 +1,65 @@
+import { Button } from '@mui/material';
 import { useState } from 'react';
 import { useDnD } from '../contexts/DnDContext';
-import NodeModal from './modals/NodeModal';
+import NameDialog from './dialogs/NameDialog';
+import RestartDialog from './dialogs/RestartDialog';
 import './styles.css';
 
-const Sidebar = ({ onSave }: { onSave: () => void }) => {
+const Sidebar = ({
+  onSave,
+  onRestart,
+}: {
+  onSave: () => void;
+  onRestart: () => void;
+}) => {
   const { setType, setName } = useDnD();
   const [defaultNames, setDefaultNames] = useState({
     input: 'Input Node',
     default: 'Default Node',
     output: 'Output Node',
   });
+  const [currentType, setCurrentType] = useState<
+    keyof typeof defaultNames | null
+  >(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentType, setCurrentType] = useState<string | null>(null);
+  const [isRestartDialogOpen, setIsRestartDialogOpen] = useState(false);
 
-  const onDragStart = (
+  const handleDragStart = (
     event: React.DragEvent,
-    nodeType: string,
-    nodeName: string
+    nodeType: keyof typeof defaultNames
   ) => {
     setType(nodeType);
-    setName(nodeName);
+    setName(defaultNames[nodeType]);
     event.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleEditClick = (nodeType: string) => {
-    setCurrentType(nodeType);
-    setIsModalOpen(true);
-  };
-
-  const handleSave = (name: string) => {
+  const handleSaveName = (name: string) => {
     if (currentType) {
-      setDefaultNames((prev) => ({ ...prev, [currentType]: name }));
+      setDefaultNames({ ...defaultNames, [currentType]: name });
     }
     setIsModalOpen(false);
   };
 
   return (
     <aside className="sidebar" role="complementary" aria-label="Node Sidebar">
-      <div className="description" aria-live="polite">
-        You can drag these nodes.
-      </div>
-
+      <div className="description">You can drag these nodes.</div>
       {Object.entries(defaultNames).map(([type, name]) => (
         <div key={type} className="node-option">
           <button
             className="edit-default-name-button"
-            onClick={() => handleEditClick(type)}
-            aria-label={`Change name for ${name}`}
+            onClick={() => {
+              setCurrentType(type as keyof typeof defaultNames);
+              setIsModalOpen(true);
+            }}
+            aria-label={`Edit name for ${name}`}
           >
-            Change Name
+            Edit Name
           </button>
           <div
             className={`dndnode ${type}`}
-            onDragStart={(event) => onDragStart(event, type, name)}
+            onDragStart={(event) =>
+              handleDragStart(event, type as keyof typeof defaultNames)
+            }
             draggable
             role="button"
             tabIndex={0}
@@ -62,24 +69,40 @@ const Sidebar = ({ onSave }: { onSave: () => void }) => {
           </div>
         </div>
       ))}
-
-      <button
+      <Button
+        variant="contained"
+        color="success"
+        fullWidth
+        aria-label="Save changes"
         className="save-button"
         onClick={onSave}
-        aria-label="Save changes"
       >
         Save
-      </button>
+      </Button>
+      <Button
+        variant="contained"
+        color="error"
+        aria-label="Restart changes"
+        fullWidth
+        onClick={() => setIsRestartDialogOpen(true)}
+      >
+        Restart
+      </Button>
 
-      <NodeModal
+      <NameDialog
         isOpen={isModalOpen}
-        nodeName={
-          currentType
-            ? defaultNames[currentType as keyof typeof defaultNames]
-            : defaultNames.default
-        }
-        onSave={handleSave}
+        nodeName={currentType ? defaultNames[currentType] : ''}
+        onSave={handleSaveName}
         onClose={() => setIsModalOpen(false)}
+      />
+
+      <RestartDialog
+        isOpen={isRestartDialogOpen}
+        onCancel={() => setIsRestartDialogOpen(false)}
+        onConfirm={() => {
+          onRestart();
+          setIsRestartDialogOpen(false);
+        }}
       />
     </aside>
   );
