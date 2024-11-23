@@ -5,11 +5,10 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   TextField,
 } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 type NameDialogProps = {
   isOpen: boolean;
@@ -20,23 +19,19 @@ type NameDialogProps = {
 
 const NameDialog = ({ isOpen, nodeName, onSave, onClose }: NameDialogProps) => {
   const [name, setName] = useState(nodeName);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     if (isOpen) {
       setName(nodeName);
-      setError('');
     }
   }, [isOpen, nodeName]);
 
-  const handleSave = () => {
-    if (name.trim() === '') {
-      setError('This cannot be empty');
-      return;
-    }
-    onSave(name.trim());
+  const handleSave = useCallback(() => {
+    const trimmedName = name.trim();
+    if (!trimmedName) return;
+    onSave(trimmedName);
     onClose();
-  };
+  }, [name, onSave, onClose]);
 
   return (
     <Dialog
@@ -45,32 +40,24 @@ const NameDialog = ({ isOpen, nodeName, onSave, onClose }: NameDialogProps) => {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">Node Name</DialogTitle>
+      <DialogTitle id="alert-dialog-title">Change node name</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          <TextField
-            label="New node name"
-            value={name}
-            type="text"
-            variant="filled"
-            fullWidth
-            placeholder="Type it"
-            error={error !== ''}
-            helperText={error}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setName(event.target.value);
-            }}
-            onKeyUp={(event: React.KeyboardEvent<HTMLInputElement>) => {
-              if (event.key === 'Enter') {
-                handleSave();
-              }
-            }}
-          />
-        </DialogContentText>
+        <TextField
+          label="New node name"
+          value={name}
+          type="text"
+          variant="filled"
+          fullWidth
+          placeholder="Type it"
+          error={name.trim() === ''}
+          helperText={name.trim() === '' ? 'This cannot be empty' : ''}
+          onChange={(event) => setName(event.target.value)}
+          onBlur={handleSave}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSave} autoFocus>
+        <Button onClick={handleSave} disabled={name.trim() === ''}>
           Save
         </Button>
       </DialogActions>
