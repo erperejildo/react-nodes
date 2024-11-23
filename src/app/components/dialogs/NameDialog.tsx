@@ -56,8 +56,14 @@ const NameDialog = ({ isOpen, nodeName, onSave, onClose }: NameDialogProps) => {
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSave} disabled={name.trim() === ''}>
+        <Button onClick={onClose} aria-label="Cancel node name">
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSave}
+          disabled={name.trim() === ''}
+          aria-label="Save node name"
+        >
           Save
         </Button>
       </DialogActions>
