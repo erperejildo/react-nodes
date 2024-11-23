@@ -56,8 +56,12 @@ const NodeModal = ({ isOpen, nodeName, onSave, onClose }: NodeModalProps) => {
           </p>
         )}
         <div className="node-modal-actions">
-          <button onClick={onClose}>Cancel</button>
-          <button onClick={handleSave}>Save</button>
+          <button aria-label="Cancel node name" onClick={onClose}>
+            Cancel
+          </button>
+          <button aria-label="Save node name" onClick={handleSave}>
+            Save
+          </button>
         </div>
       </div>
     </div>
