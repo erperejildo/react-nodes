@@ -1,7 +1,13 @@
 'use client';
 
 import CloseIcon from '@mui/icons-material/Close';
-import { Box, IconButton, Snackbar, SnackbarCloseReason } from '@mui/material';
+import {
+  Box,
+  CircularProgress,
+  IconButton,
+  Snackbar,
+  SnackbarCloseReason,
+} from '@mui/material';
 import {
   addEdge,
   Background,
@@ -43,6 +49,7 @@ const AutomationBuilder = () => {
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
+  const [loadingData, setLoadingData] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentNode, setCurrentNode] = useState<{
     id: string;
@@ -53,6 +60,7 @@ const AutomationBuilder = () => {
   const showSnackbar = useCallback((msg: string) => setMsgSnackbar(msg), []);
 
   const loadData = useCallback(async () => {
+    setLoadingData(true);
     try {
       const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (savedData) {
@@ -66,7 +74,9 @@ const AutomationBuilder = () => {
         setNodes(automation.nodes);
         setEdges(automation.edges);
       }
+      setLoadingData(false);
     } catch {
+      setLoadingData(false);
       showSnackbar('Error loading automation data');
     }
   }, [setNodes, setEdges, showSnackbar]);
@@ -165,6 +175,11 @@ const AutomationBuilder = () => {
 
   return (
     <>
+      {loadingData === true && (
+        <div className="spinner-container">
+          <CircularProgress />
+        </div>
+      )}
       <Box className="automation-builder">
         <Box
           className="reactflow-wrapper"
